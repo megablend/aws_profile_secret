@@ -1,5 +1,5 @@
 # profile_aws_secret
-This script helps provision secret data file on AWS, create new secrets and update existing keys or add new ones using CLI
+This script helps provision secret data file on AWS, create new secrets and update existing keys or add new ones using CLI.
 
 ## Usage
 Below are the various functionalities this script provides:
