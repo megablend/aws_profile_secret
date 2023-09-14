@@ -55,7 +55,7 @@ download_secret_details () {
         downloaded_content=$(printf "%s" "$downloaded_content" | sed 's#\\"#"#g')
     fi
     echo ${downloaded_content} > $download_file
-    echo "File successfully downloaded as $download_file. Update the new values and re-uploaded using the $UPDATE_SECRET_CERT_OPTION command"
+    echo "File successfully downloaded as $download_file. Update the new values and re-uploaded using the $UPDATE_SECRET_DATA_OPTION command"
 }
 
 upload_new_secret () {
@@ -73,13 +73,13 @@ validate_jq_existence () {
 
 case $1 in
     # Handle the upload of data file to AWS secrets manager
-    $UPDATE_SECRET_CERT_OPTION)
-        if [[ "$#" -ne 9 ]] || [[ $2 != $SECRET_ID_OPTION ]] || [[ $4 != $SECRET_KEY_OPTION ]] || [[ $6 != $SECRET_CERT_FILE_PATH_OPTION ]] || [[ $8 != $AWS_PROFILE ]]; then
+    $UPDATE_SECRET_DATA_OPTION)
+        if [[ "$#" -ne 9 ]] || [[ $2 != $SECRET_ID_OPTION ]] || [[ $4 != $SECRET_KEY_OPTION ]] || [[ $6 != $SECRET_DATA_FILE_PATH_OPTION ]] || [[ $8 != $AWS_PROFILE ]]; then
         printf "\n\n"
 cat <<- EOF
   Invalid parameters provided for uploading data file details to AWS SSM. See example command below:
   usage: ./aws_secret_upload.sh <command> [<parameters>...]
-  example: ./aws_secret_upload.sh update-secret-data --secret-id <YOUR_AWS_SECRET_ID> --secret-key <THE_KEY_FOR_CERT> --data-file <ABSOLUTE_PATH_OF_CERT> --profile <YOUR_AWS_PROFILE>
+  example: ./aws_secret_upload.sh update-secret-data --secret-id <YOUR_AWS_SECRET_ID> --secret-key <THE_KEY_FOR_DATA> --data-file <ABSOLUTE_PATH_OF_DATA> --profile <YOUR_AWS_PROFILE>
 EOF
         else
             # read a file and convert to one line
@@ -103,7 +103,7 @@ EOF
                 fi
                 upload_secret_details $3 $9 $5 "$updated_file_content"
             else
-                echo "Invalid data file path <${data_file}> provided for ${SECRET_CERT_FILE_PATH_OPTION}, please ensure that the file exists."
+                echo "Invalid data file path <${data_file}> provided for ${SECRET_DATA_FILE_PATH_OPTION}, please ensure that the file exists."
                 exit 1
             fi
         fi
@@ -158,7 +158,7 @@ cat <<- EOF
   Invalid command provided, see examples below:
   usage: ./aws_secret_upload.sh <command> [<parameters>...] $nl
   Upload data file details
-  example: ./aws_secret_upload.sh update-secret-data --secret-id <YOUR_AWS_SECRET_ID> --secret-key <THE_KEY_FOR_CERT> --data-file <ABSOLUTE_PATH_OF_CERT> --profile <YOUR_AWS_PROFILE>$nl
+  example: ./aws_secret_upload.sh update-secret-data --secret-id <YOUR_AWS_SECRET_ID> --secret-key <THE_KEY_FOR_DATA> --data-file <ABSOLUTE_PATH_OF_DATA> --profile <YOUR_AWS_PROFILE>$nl
   Update secret key value
   example: ./aws_secret_upload.sh update-secret-value --secret-id <YOUR_AWS_SECRET_ID> --secret-key <THE_KEY_TO_ADD_OR_UPDATE> --secret-value <THE_NEW_VALUE> --profile <YOUR_AWS_PROFILE>$nl
   New secret key value

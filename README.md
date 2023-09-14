@@ -18,7 +18,7 @@ Example:
 ## Add/Update file details to a specific AWS secret key
 See command below:
 ```bash
-  ./profile.sh update-secret-data --secret-id <YOUR_AWS_SECRET_ID> --secret-key <THE_KEY_FOR_FILE_DATA> --data-file <ABSOLUTE_PATH_OF_CERT> --profile <YOUR_AWS_PROFILE>
+  ./profile.sh update-secret-data --secret-id <YOUR_AWS_SECRET_ID> --secret-key <THE_KEY_FOR_FILE_DATA> --data-file <ABSOLUTE_PATH_OF_DATA> --profile <YOUR_AWS_PROFILE>
 ```
 Example:
 ```bash
