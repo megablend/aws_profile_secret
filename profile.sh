@@ -2,13 +2,13 @@
 set -e
 
 UPDATE_SECRET_VALUE_OPTION="update-secret-value"
-UPDATE_SECRET_CERT_OPTION="update-secret-cert"
+UPDATE_SECRET_DATA_OPTION="update-secret-data"
 NEW_SECRET_VALUE_OPTION="new-secret"
 DOWNLOAD_SECRET_VALUE_OPTION="download-secret"
 SECRET_KEY_OPTION="--secret-key"
 SECRET_VALUE_OPTION="--secret-value"
 SECRET_ID_OPTION="--secret-id"
-SECRET_CERT_FILE_PATH_OPTION="--cert-file"
+SECRET_DATA_FILE_PATH_OPTION="--data-file"
 NEW_SECRET_JSON_OPTION="--json-file"
 EXTENSION_OPTION="--ext"
 AWS_PROFILE="--profile"
@@ -72,23 +72,23 @@ validate_jq_existence () {
 
 
 case $1 in
-    # Handle the upload of certificates to SSM
+    # Handle the upload of data file to AWS secrets manager
     $UPDATE_SECRET_CERT_OPTION)
         if [[ "$#" -ne 9 ]] || [[ $2 != $SECRET_ID_OPTION ]] || [[ $4 != $SECRET_KEY_OPTION ]] || [[ $6 != $SECRET_CERT_FILE_PATH_OPTION ]] || [[ $8 != $AWS_PROFILE ]]; then
         printf "\n\n"
 cat <<- EOF
-  Invalid parameters provided for uploading cert details to AWS SSM. See example command below:
+  Invalid parameters provided for uploading data file details to AWS SSM. See example command below:
   usage: ./aws_secret_upload.sh <command> [<parameters>...]
-  example: ./aws_secret_upload.sh update-secret-cert --secret-id <YOUR_AWS_SECRET_ID> --secret-key <THE_KEY_FOR_CERT> --cert-file <ABSOLUTE_PATH_OF_CERT> --profile <YOUR_AWS_PROFILE>
+  example: ./aws_secret_upload.sh update-secret-data --secret-id <YOUR_AWS_SECRET_ID> --secret-key <THE_KEY_FOR_CERT> --data-file <ABSOLUTE_PATH_OF_CERT> --profile <YOUR_AWS_PROFILE>
 EOF
         else
             # read a file and convert to one line
-            cert_file=$7
-            if test -f $cert_file; then
+            data_file=$7
+            if test -f $data_file; then
                 validate_jq_existence
 
                 # Note: using perl to avoid trailing new line, most linux based OS has `perl` pre-installed
-                file_content=$(perl -pe 's/\n/\\n/' < ${cert_file})
+                file_content=$(perl -pe 's/\n/\\n/' < ${data_file})
                 updated_file_content=$file_content
 
                 # remove trailing newline from the file content if any
@@ -103,7 +103,7 @@ EOF
                 fi
                 upload_secret_details $3 $9 $5 "$updated_file_content"
             else
-                echo "Invalid certificate file path <${cert_file}> provided for ${SECRET_CERT_FILE_PATH_OPTION}, please ensure that the file exists."
+                echo "Invalid data file path <${data_file}> provided for ${SECRET_CERT_FILE_PATH_OPTION}, please ensure that the file exists."
                 exit 1
             fi
         fi
@@ -157,8 +157,8 @@ EOF
 cat <<- EOF
   Invalid command provided, see examples below:
   usage: ./aws_secret_upload.sh <command> [<parameters>...] $nl
-  Upload certificate details
-  example: ./aws_secret_upload.sh update-secret-cert --secret-id <YOUR_AWS_SECRET_ID> --secret-key <THE_KEY_FOR_CERT> --cert-file <ABSOLUTE_PATH_OF_CERT> --profile <YOUR_AWS_PROFILE>$nl
+  Upload data file details
+  example: ./aws_secret_upload.sh update-secret-data --secret-id <YOUR_AWS_SECRET_ID> --secret-key <THE_KEY_FOR_CERT> --data-file <ABSOLUTE_PATH_OF_CERT> --profile <YOUR_AWS_PROFILE>$nl
   Update secret key value
   example: ./aws_secret_upload.sh update-secret-value --secret-id <YOUR_AWS_SECRET_ID> --secret-key <THE_KEY_TO_ADD_OR_UPDATE> --secret-value <THE_NEW_VALUE> --profile <YOUR_AWS_PROFILE>$nl
   New secret key value
